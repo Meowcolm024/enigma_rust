@@ -4,7 +4,7 @@ use std::io::Write;
 
 macro_rules! parseNum {
     ($l: expr, u8) => {
-        ($l).trim().parse::<u8>().expect("error: not a number");
+        ($l).trim().parse::<u8>().unwrap_or_else(|_| 0);
     };
     ($l: expr, u64) => {
         ($l).trim().parse::<u64>().expect("error: not a number");
@@ -17,7 +17,7 @@ fn main() {
     let seed: u64 = parseNum!(input, u64);
     let mut pos: [u8; 3] = [0; 3];
     for i in 1..4 {
-        let input = prompt(format!("rotor position {}: ", i).to_string());
+        let input = prompt(format!("rotor position {}: ", i));
         pos[i - 1] = parseNum!(input, u8);
     }
     // main loop
@@ -27,7 +27,7 @@ fn main() {
             break;
         } else {
             let mut machine = enigma::enigma(seed, (pos[0] % 26, pos[1] % 26, pos[2] % 26));
-            let result = enigma::cipherstr(input.trim().to_string().to_uppercase(), &mut machine);
+            let result = enigma::cipherstr(input.trim().to_uppercase(), &mut machine);
             println!("cipher text: {}", result);
         }
     }
